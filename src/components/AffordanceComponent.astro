@@ -1,0 +1,32 @@
+---
+import newsletters from "@/data/newsletters";
+
+const { newsletter } = Astro.props;
+
+const featured =
+  newsletter && newsletter in newsletters
+    ? { ...newsletters[newsletter] }
+    : { ...newsletters.reset };
+
+const { desktopHeight, mobileHeight } = featured;
+---
+
+<iframe id="affordance" src={featured.url} frameborder="0" scrolling="no"
+></iframe>
+
+<style lang="scss" define:vars={{ desktopHeight, mobileHeight }}>
+  @import "@/styles/variables";
+
+  iframe {
+    width: 100%;
+    max-width: 820px;
+    overflow: hidden;
+    height: var(--mobileHeight);
+  }
+
+  @media screen and (min-width: $screen-md) {
+    iframe {
+      height: var(--desktopHeight);
+    }
+  }
+</style>

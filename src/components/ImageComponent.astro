@@ -1,0 +1,22 @@
+---
+// use for remote images
+// should this be used specifically with wbez's cms or another cdn based backend for images?
+// could accept a guid and handle responsize images / preloading
+
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+---
+
+<img class="img__component" {...Astro.props} />
+
+<style>
+  img.img__component {
+    width: 100%;
+    object-fit: cover;
+    object-position: bottom;
+  }
+</style>

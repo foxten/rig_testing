@@ -1,0 +1,43 @@
+{
+  "name": "data_rig_astro",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=18.*"
+  },
+  "scripts": {
+    "start": "astro dev",
+    "dev": "STAGE=stage npm run start",
+    "dev:prod": "STAGE=prod npm run start",
+    "build": "astro build",
+    "build:stage": "STAGE=stage npm run build",
+    "build:prod": "STAGE=prod npm run build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "release": "release-it",
+    "gdoc": "node tasks/fetchGoogle.js",
+    "imgs": "node tasks/upload.js"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@astrojs/sitemap": "^3.0.3",
+    "@astrojs/svelte": "^3.1.0",
+    "@aws-sdk/client-s3": "^3.438.0",
+    "@wbez/ferris-ds": "^7.0.0",
+    "archieml": "^0.5.0",
+    "astro": "^2.8.1",
+    "astro-imagetools": "^0.9.0",
+    "astro-purgecss": "^2.3.0",
+    "layercake": "^7.6.1",
+    "sass": "^1.63.6",
+    "svelte": "^4.0.5"
+  },
+  "release-it": {
+    "github": {
+      "release": true
+    }
+  },
+  "devDependencies": {
+    "release-it": "^16.2.1"
+  }
+}

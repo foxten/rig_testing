@@ -1,0 +1,162 @@
+---
+import { Image } from "astro:assets";
+import getAssetSrc from "@/utils/getAssetSrc.js";
+
+const { config } = Astro.props;
+const siteUrl = import.meta.env.SITE;
+const metaData = config.config.metaData;
+const currentPage = siteUrl + Astro.url.pathname;
+
+let { title, mode } = Astro.props;
+
+if (!title) {
+  title = metaData.title;
+}
+if (!mode) {
+  mode = "light";
+}
+
+const backgroundColor = mode === "light" ? "#e7e7e7" : "#333";
+
+const iconMap = {
+  twitter: `twitter-${mode}.svg`,
+  facebook: `facebook-f-${mode}.svg`,
+  email: `envelope-solid-${mode}.svg`,
+  link: `link-solid-${mode}.svg`,
+};
+---
+
+<div class="social__buttons">
+  <a
+    href={`mailto:?subject=${title}`}
+    class="social__button social__button--email t-unlink"
+    target="_blank"
+    rel="noopener"
+  >
+    <span class="social__button__text">Email</span>
+
+    <Image
+      class="social__button__icon"
+      src={getAssetSrc(iconMap.email)}
+      alt="email icon"
+    />
+  </a>
+  <a
+    href={`https://www.facebook.com/sharer/sharer.php?u=${currentPage}`}
+    class="social__button social__button--facebook t-unlink"
+    target="_blank"
+    rel="noopener"
+  >
+    <span class="social__button__text">Facebook</span>
+
+    <Image
+      class="social__button__icon"
+      src={getAssetSrc(iconMap.facebook)}
+      alt="facebook icon"
+    />
+  </a>
+  <a
+    href={`https://twitter.com/share?url=${currentPage}`}
+    class="social__button social__button--twitter t-unlink"
+    target="_blank"
+    rel="noopener"
+  >
+    <span class="social__button__text">Twitter</span>
+
+    <Image
+      class="social__button__icon"
+      src={getAssetSrc(iconMap.twitter)}
+      alt="twitter icon"
+    />
+  </a>
+  <a class="social__button social__button--twitter t-unlink">
+    <copy-link data-path={currentPage}>
+      <button id="copyBtn">
+        <span class="social__button__text">Copy Link</span>
+        <Image
+          class="social__button__icon"
+          src={getAssetSrc(iconMap.link)}
+          alt="twitter icon"
+        />
+        <span class="tooltip">URL Copied</span>
+      </button>
+    </copy-link>
+  </a>
+</div>
+
+<script>
+  class CopyLink extends HTMLElement {
+    constructor() {
+      super();
+
+      const path = this.dataset.path;
+      const button = this.querySelector("#copyBtn");
+      button.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(path);
+          console.log("Content copied to clipboard");
+          const toolTip = this.querySelector(".tooltip");
+          toolTip.style.display = "block";
+          setTimeout(() => {
+            toolTip.style.display = "none";
+          }, 1500);
+        } catch (err) {
+          console.error("Failed to copy: ", err);
+        }
+      });
+    }
+  }
+  customElements.define("copy-link", CopyLink);
+</script>
+
+<style lang="scss" define:vars={{ backgroundColor }}>
+  .social__buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .social__button {
+    display: flex;
+    width: 31px;
+    height: 31px;
+    text-decoration: none;
+  }
+  .social__button__text {
+    display: none;
+    padding: 0;
+    margin: 0;
+  }
+  .social__button__icon {
+    width: 31px;
+    height: 31px;
+    padding: 0.3rem;
+  }
+
+  button {
+    position: relative;
+  }
+  button .tooltip {
+    position: absolute;
+    margin-left: -90px;
+    margin-top: 3px;
+    background: #f1f1f1;
+    padding: 4px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+    display: none;
+    animation: fadeIn 0.3s;
+  }
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  a:hover {
+    background-color: var(--backgroundColor);
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+// 404.astro - default 404 page
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+  <div class="error__container">
+    <h1>404</h1>
+    <p>Page not found</p>
+    <a href="./">Back to Home</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .error__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70%;
+    width: 100%;
+  }
+</style>

@@ -1,0 +1,99 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ImageComponent from "@/components/ImageComponent.astro";
+import DynamicImage from "@/components/DynamicImage.astro";
+import AutoComplete from "@/components/AutoComplete.astro";
+import LineChart from "@/components/charts/LineChart/LineChart.svelte";
+import AffordanceComponent from "@/components/AffordanceComponent.astro";
+
+import points from "@/data/points.json";
+
+
+// Simple API example
+const jokeApiEndpoint = "https://icanhazdadjoke.com/";
+const response = await fetch(jokeApiEndpoint, {
+  headers: {
+    accept: "application/json",
+  },
+});
+const { joke } = await response.json();
+const providedOpts = [
+  "Some data here",
+  "Another bit, maybe a title?",
+  "An address here",
+  "City information",
+];
+---
+
+<BaseLayout>
+  <ImageComponent
+    src="https://picsum.photos/1200/400"
+    width={1100}
+    height={400}
+    alt="Example Photo"
+  />
+  <DynamicImage imgProperties={{
+    id: "partyppl.jpeg",
+    alt: "A DJ plays to the Silver Room Block Party crowd",
+    width: 400,
+    kernel: "lanczos3",
+    breakpoints: [320, 520, 650, 800]
+  }}/>
+  <div class="c-prose -story">
+    <h1>Welcome to the Rig</h1>
+    <p>
+      This is a starter page to showcase the various features included in this
+      repo. The features are better documented in the readme, but here is an
+      example of how to use them.
+    </p>
+    <h4>Linechart:</h4>
+    <LineChart
+      points={points}
+      stroke="green"
+      fill="none"
+      lineType="curved"
+      client:only="svelte"
+    />
+    <h4>Http Example:</h4>
+    <p>{joke}</p>
+    <h4>Auto Complete Componenet</h4>
+    <AutoComplete placeholder="This is a form" options={providedOpts} />
+
+    <h4>Newsletter Signup Component</h4>
+    <AffordanceComponent newsletter="" />
+    <h4>Markdown Copy</h4>
+    <p id="story">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima quam omnis
+      architecto, laborum sapiente eaque temporibus corrupti, deserunt
+      laudantium voluptas iste impedit consectetur. Sunt beatae laudantium
+      repellat rem deserunt impedit.
+    </p>
+    <ImageComponent
+      src="https://picsum.photos/600/300"
+      width={600}
+      height={300}
+      alt="Example Photo"
+    />
+
+    <p id="data">
+      Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius impedit est
+      rem! Error, amet veniam maxime natus dignissimos, porro et consectetur
+      facere saepe odio necessitatibus recusandae nulla iste dolorem voluptate.
+    </p>
+
+    <h4>Mock App:</h4>
+    <p>
+      Check out this <a href="./starwars/">example app</a> for creating templates
+      out of JSON data
+    </p>
+
+    <h4><a href="./brightspot-page">Brightspot API connection page</a></h4>
+    <p>Here's an example of a page which pulls from the Brighspot API and uses our features as well.</p>
+  </div>
+</BaseLayout>
+
+<style>
+  h4 {
+    margin: 2rem 0 !important;
+  }
+</style>

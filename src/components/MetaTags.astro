@@ -1,0 +1,50 @@
+---
+import GTMHead from "./gtm/head.astro";
+import deploymentConfig from "../../config";
+const { config, title, description, metaImg } = Astro.props;
+
+const pageTitle: string = title?.length
+  ? title + " | " + config.metaData.org
+  : config.metaData.org;
+
+const pageDescription: string = description?.length
+  ? description
+  : config.metaData.description;
+
+const { env } = deploymentConfig;
+const currentPath: string = Astro.url.href;
+
+const imgPath = metaImg ? metaImg : config.metaData.image.path;
+
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<!-- Meta HTML -->
+<head>
+  <meta name="description" content={pageDescription} />
+  <meta name="author" content={config.metaData.org} />
+  {env === "stage" && <meta name="robots" content="noindex" />}
+
+  <!-- og tags for twitter, facebook -->
+  <meta property="og:url" content={currentPath} />
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={pageDescription} />
+  <meta property="og:image" content={imgPath} />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={pageTitle} />
+  <meta name="twitter:description" content={pageDescription} />
+  <meta name="twitter:image" content={imgPath} />
+
+  <link rel="canonical" href={currentPath} />
+  <!-- <link
+    href={`https://www.googletagmanager.com/gtag/js?id=${config.gtm}`}
+    rel="preload"
+    as="script"
+  /> -->
+  <base href={baseUrl} />
+
+  <title>{pageTitle}</title>
+  <GTMHead organization={config.metaData.org} />
+</head>

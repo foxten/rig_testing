@@ -1,0 +1,50 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import getLocalData from "@/utils/getLocalData";
+import slugify from "@/utils/slugify";
+import siteConfig from "@/siteConfig.js";
+
+// list characters
+const starWars = await getLocalData("starWars");
+const people = starWars.map((person) => ({
+  ...person,
+  slug: slugify(person.name),
+}));
+---
+
+<BaseLayout>
+  <h1>{siteConfig.config.metaData.title}</h1>
+  <hr />
+  <section>
+    <p>
+      Use archieml to source content from google docs: <a
+        href="./starwars/archie">archie.astro</a
+      >
+    </p>
+    <br /><br />
+  </section>
+  <p>Loop through the data and use the title as a slug for routing</p>
+  <div class="grid__contiainer" style="margin-top: 1rem;">
+    {
+      people.map((p) => (
+        <div>
+          <a href={`./starwars/${p.slug}`}>{p.name}</a>
+        </div>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style lang="scss">
+  @import "@/styles/variables";
+  .grid__contiainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1rem;
+  }
+  @media (min-width: $screen-md) {
+    .grid__contiainer {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,20 @@
+---
+import { Img } from "astro-imagetools/components";
+import deploymentConfigs from "config.js";
+
+const { org } = deploymentConfigs;
+const domain = org === "wbez" ? "https://cdn.wbez.org/interactives" : "https://cdn.suntimes.com/graphics" 
+let { id, alt, width = "", height = "", aspectRatio = "", breakpoints = [320, 520, 650, 845, 1080, 1300], fit = "", kernel = "nearest" } = Astro.props.imgProperties;
+id = `${domain}/${id}`
+
+---
+<Img 
+    src={id}
+    alt={alt}
+    aspect={aspectRatio}
+    width={width}
+    height={height}
+    breakpoints={breakpoints}
+    fit={fit}
+    kernel={kernel}
+/>

@@ -1,0 +1,15 @@
+---
+// Preloaded with WBEZ story template
+// TODO: Make dynamic with suntimes' styles
+
+import BaseLayout from "./BaseLayout.astro";
+
+const { metaImg, description } = Astro.props;
+const title = Astro.props.title || Astro.props.frontmatter.title;
+---
+
+<BaseLayout metaImg={metaImg} description={description} title={title}>
+    <section class="c-prose -story l-clearfix">
+        <slot />
+    </section>
+</BaseLayout>

@@ -1,0 +1,43 @@
+name: Deploy to Production
+
+on:
+  release:
+    types: [published]
+  repository_dispatch:
+    types: [deploy-stage]
+
+jobs:
+  deploy:
+    if: >
+      (github.event_name == 'release' && !github.event.release.prerelease) ||
+      (github.event_name == 'repository_dispatch' && contains(github.sha, github.event.client_payload.sha))
+    name: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Astro Build
+        env:
+          VITE_BRIGHTSPOT_CLIENT_ID: ${{ secrets.BRIGHTSPOT_CLIENT_ID }}
+          VITE_BRIGHTSPOT_CLIENT_SECRET: ${{ secrets.BRIGHTSPOT_CLIENT_SECRET }}
+        run: |
+          npm install
+          npm run build:prod
+
+      - name: Copy /dist to s3
+        uses: prewk/s3-cp-action@v2
+        with:
+          aws_access_key_id: ${{ secrets.DATA_RIG_AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.DATA_RIG_AWS_ACCESS_KEY_ID }}
+          source: "./dist"
+          dest: "s3://${{ env.S3_BUCKET }}/${{ env.S3_KEY }}"
+          flags: --recursive
+
+      - name: Invalidate CloudFront
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ env.DISTRIBUTION }}
+          PATHS: "/${{ env.S3_KEY }}/*"
+          AWS_REGION: "us-east-2" # Might need to make this conditoinally `us-east-1` for cst
+          AWS_ACCESS_KEY_ID: ${{ secrets.DATA_RIG_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DATA_RIG_AWS_SECRET_ACCESS_KEY }}

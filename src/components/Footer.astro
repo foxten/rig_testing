@@ -1,0 +1,46 @@
+---
+import { Image } from "astro:assets";
+import siteConfig from "@/siteConfig.js";
+import getAssetSrc from "@/utils/getAssetSrc.js";
+import SocialIcons from "./SocialIcons.astro";
+
+const logoObj = siteConfig.images.logo;
+const { backgroundColor, fontColor, darkMode } = siteConfig.styles.footer;
+---
+
+<footer>
+  <div class="footer__container l-container">
+    <div class="footer__head">
+      <div class="brand__logo">
+        <Image src={getAssetSrc(logoObj.name)} alt={logoObj.alt} />
+      </div>
+      <SocialIcons config={siteConfig} mode={darkMode ? "dark" : "light"} />
+    </div>
+  </div>
+</footer>
+
+<style lang="scss" define:vars={{ backgroundColor, fontColor }}>
+  @import "@/styles/variables";
+  footer {
+    background-color: var(--backgroundColor);
+    color: var(--fontColor);
+    padding: 30px 10px;
+    margin-top: auto;
+  }
+  .footer__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand__logo {
+    width: 7rem;
+  }
+  @media screen and (min-width: $screen-md) {
+    footer {
+      padding: 30px;
+    }
+    .brand__logo {
+      width: 13rem;
+    }
+  }
+</style>

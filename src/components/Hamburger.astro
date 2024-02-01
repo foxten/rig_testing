@@ -1,0 +1,46 @@
+---
+const { lineColor } = Astro.props;
+---
+
+<div class="hamburger">
+  <span class="line"></span>
+  <span class="line"></span>
+  <span class="line"></span>
+</div>
+
+<style
+  lang="scss"
+  define:vars={{
+    lineColor,
+  }}
+>
+  @import "@/styles/variables";
+
+  .hamburger {
+    padding-right: 15px;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hamburger .line {
+    display: block;
+    width: 30px;
+    height: 4px;
+    margin-bottom: 5px;
+    background-color: var(--lineColor);
+  }
+  .hamburger .is-active {
+    &:nth-child(1) {
+      display: none;
+    }
+  }
+  @media (min-width: $screen-lg) {
+    .hamburger {
+      display: none;
+    }
+  }
+</style>

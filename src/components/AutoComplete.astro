@@ -1,0 +1,86 @@
+---
+import slugify from "@/utils/slugify";
+const { placeholder, options, override, projectName = "" } = Astro.props;
+const optionsPlus = options.map((option) => ({
+  text: option,
+  slug: slugify(option),
+}));
+---
+
+<autocomplete-form>
+  <div class="autocomplete-form">
+    <input id="search-field" placeholder={placeholder} value="" type="search" />
+    <div id="resultsContainer"></div>
+  </div>
+</autocomplete-form>
+
+<script define:vars={{ optionsPlus, override, projectName }}>
+class AutoComplete extends HTMLElement {
+  constructor() {
+    super();
+    let initialEntry = "";
+    let results = [];
+    const getResults = (e, results) => {
+      resultsContainer.innerHTML = null;
+      results.map((r) => {
+        let opt =
+          override === true
+            ? document.createElement("button")
+            : document.createElement("a");
+        opt.className = `result ${this.className}`;
+        opt.innerText = r.text;
+        opt.href =
+          projectName !== "" ? `./${projectName}/${r.slug}` : `${r.slug}`;
+        // opt.addEventListener("click", (e) => {
+        // if you're looking to override the default behavior
+        // write your click handler here
+        // })
+        resultsContainer.append(opt);
+      });
+    };
+
+    this.addEventListener("input", (e) => {
+      let entry = e.target.value;
+      if (!entry.length) {
+        resultsContainer.innerHTML = null;
+      } else if (entry === initialEntry && results.length > 0) {
+        getResults(
+          e,
+          results.filter((d) =>
+            d.text.toLowerCase().startsWith(entry.toLowerCase())
+          )
+        );
+      } else {
+        initialEntry = entry;
+        results = optionsPlus.filter((d) =>
+          d.text.toLowerCase().startsWith(entry.toLowerCase())
+        );
+        getResults(e, results);
+      }
+    });
+  }
+}
+customElements.define("autocomplete-form", AutoComplete);
+</script>
+
+<style lang="scss">
+  .autocomplete-form {
+    margin-bottom: 50px;
+    #search-field {
+      width: 100%;
+      height: auto;
+    }
+    #resultsContainer {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      .result {
+        height: auto;
+        text-align: center;
+        color: black;
+        border: 0.5px solid black;
+        padding: 5px 0px 5px;
+      }
+    }
+  }
+</style>

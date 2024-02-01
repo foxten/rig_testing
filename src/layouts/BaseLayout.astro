@@ -1,0 +1,60 @@
+---
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import MetaTags from "@/components/MetaTags.astro";
+import GTMBody from "@/components/gtm/body.astro";
+import siteConfig from "@/siteConfig.js";
+const org = siteConfig.config.metaData.org.toLowerCase();
+
+// TODO -> setup a suntimes base sass file
+() => import(`../styles/${org}.scss`);
+
+// Validate props
+interface Props {
+  title?: string;
+  description?: string;
+  metaImg?: string;
+}
+const { description, metaImg, title } = Astro.props;
+---
+
+<html lang="en">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    rel="shortcut icon"
+    href={`${import.meta.env.BASE_URL + org}/favicon-32x32.png`}
+    type="image/png"
+  />
+
+  <MetaTags
+    config={siteConfig.config}
+    title={title}
+    description={description}
+    metaImg={metaImg}
+  />
+  <body>
+    <Header siteSettings={siteConfig} />
+    <GTMBody containerId={siteConfig.config.gtm} />
+    <main class="l-container">
+      <slot />
+    </main>
+    <Footer org={org} />
+    <style is:global>
+      body,
+      html {
+        height: 100%;
+      }
+      main {
+        flex: 1;
+        z-index: 0;
+        padding-top: 0.3rem;
+        padding-bottom: 2rem;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
+  </body>
+</html>

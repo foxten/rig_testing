@@ -1,0 +1,55 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ImageComponent from "@/components/ImageComponent.astro";
+import LineChart from "@/components/charts/LineChart/LineChart.svelte";
+import AffordanceComponent from "@/components/AffordanceComponent.astro";
+import siteConfig from "@/siteConfig.js";
+
+import points from "@/data/points.json";
+
+// Fetch page from Brightspot CMS, seen in the cms here: https://cms.chicago.suntimes.com/cms/content/edit.jsp?id=0000017e-e9d8-d668-ad7e-fff8d8580000&typeId=8ed78382-9caa-3b51-b769-6d08a4faecae
+const contentId = "0000017e-e9d8-d668-ad7e-fff8d8580000";
+const data = await fetch(`${siteConfig.brightspotEndpoint}/${contentId}`, {
+  method: "GET",
+  headers: {
+    accept: "application/json",
+    "X-Client-Id": siteConfig.brightspotClientId,
+    "X-Client-Secret": siteConfig.brightspotClientSecret,
+  }
+}).then((response) =>
+  response.json()
+);
+---
+
+<BaseLayout>
+  <!-- Get image from fetched page -->
+  <ImageComponent
+    src={data.result['pagePromotable.promoImageVariant'].variant.path} 
+    width={1100}
+    height={400}
+    alt="Example Photo"
+  />
+  <h1>{data.result.headline}</h1>
+  <p>{data.result.subheadline}</p>
+  <h4>Newsletter Signup</h4>
+  <AffordanceComponent newsletter="" />
+  <!-- Use set:html when inserting html body from CMS -->
+  <p set:html={data.result.body} />
+
+  <div class="c-prose -story">
+    <h4>Linechart:</h4>
+    <LineChart
+      points={points}
+      stroke="green"
+      fill="none"
+      lineType="curved"
+      client:only="svelte"
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  h4 {
+    margin: 2rem 0 !important;
+  }
+</style>

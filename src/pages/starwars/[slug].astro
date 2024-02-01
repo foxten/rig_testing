@@ -1,0 +1,78 @@
+---
+import getLocalData from "@/utils/getLocalData";
+import slugify from "@/utils/slugify";
+import StoryLayout from "@/layouts/StoryLayout.astro";
+import SocialIcons from "@/components/SocialIcons.astro";
+import ImageComponent from "@/components/ImageComponent.astro";
+import DynamicImage from "@/components/DynamicImage.astro";
+import siteConfig from "@/siteConfig.js";
+// Required for baking static pages from local data
+
+export async function getStaticPaths() {
+  const imgWidth = 1150;
+  const imgHeight = 500;
+  const starWars = await getLocalData("starWars");
+  // Return array with the params key matching the file name ie [slug].astro
+  return starWars.map(({ name, height, mass, homeworld, films }, idx) => ({
+    params: {
+      slug: slugify(name),
+    },
+    // Name all the data points you want to be available in the page
+    props: {
+      name,
+      height,
+      mass,
+      homeworld,
+      films,
+      image: {
+        url: `https://api.wbez.org/v2/images/8a774bc0-b313-4e20-b81c-0a75b4077e9a.jpg?width=${imgWidth}&height=${imgHeight}&mode=ASPECT_WIDTH`,
+        alt: name,
+        width: imgWidth,
+        height: imgHeight,
+      },
+    },
+  }));
+}
+// Expose the data to the page via Astro.props
+const { name, height, mass, homeworld, image } = Astro.props;
+
+const description = `Star Wars Character: ${name} is ${height}cm tall and weighs ${mass}kg`;
+
+// Example of data fetch from a remote source: -- compiles at build time
+const res = await fetch(homeworld);
+const data = await res.json();
+const { name: homeworldName, population } = data;
+---
+
+<StoryLayout
+  title={name}
+  description={description}
+  metaImg="https://picsum.photos/200/300"
+>
+  <h1>{name}</h1>
+  <ImageComponent
+    src={image.url}
+    alt={image.alt}
+    width={image.width}
+    height={image.height}
+  />
+  <DynamicImage imgProperties={{
+    id: "partyppl.jpeg",
+    alt: "A DJ plays to the Silver Room Block Party crowd",
+    width: 1150,
+    height: 500,
+    // kernel: "cubic",
+    // breakpoints: [320, 520, 650, 800]
+  }}/>
+  <SocialIcons title={name} config={siteConfig} />
+
+  <hr />
+  <p>Height: {height} cm</p>
+  <p>Weight: {mass} kg</p>
+  <strong>Remote Data:</strong>
+  <p>Homeworld: {homeworldName}</p>
+  <p>Population: {population}</p>
+  <hr />
+
+  <a href="./starwars/">Back</a>
+</StoryLayout>
